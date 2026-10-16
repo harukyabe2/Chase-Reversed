@@ -20,6 +20,28 @@ void ACRGameModeBase::StartPlay()
 
 	RemainingTime = TimeLimit;
 
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+
+	if (PC)
+	{
+		// 入力モードを戻す
+		FInputModeGameOnly InputMode;
+		PC->SetInputMode(InputMode);
+
+		// マウスカーソルを非表示する
+		PC->bShowMouseCursor = false;
+
+		// 移動・視点入力を有効化
+		PC->SetIgnoreMoveInput(false);
+		PC->SetIgnoreLookInput(false);
+
+		// キャラクターの入力受付を開始
+		if (APawn* PlayerPawn = PC->GetPawn())
+		{
+			PlayerPawn->EnableInput(PC);
+		}
+	}
+
 	GetWorldTimerManager().SetTimer(CountdownTimer, this, &ACRGameModeBase::CountdownTick, 1.0f, true);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Debug message: CRGameMode is used."));
